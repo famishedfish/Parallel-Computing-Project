@@ -2,7 +2,7 @@ CC = g++
 
 SYSNAME = LINUX
 DFLAG =
-CFLAGS = $(DFLAG) -O2
+CFLAGS = $(DFLAG) -O2 -fopenmp
 LDFLAGS =
 
 TARGET = gt
@@ -37,6 +37,9 @@ makegame.o : nfgame.o gnmgame.o makegame.cc makegame.h
 
 gt.o : gt.cc gnm.o ipa.o makegame.o
 	$(CC) -D$(SYSNAME) $(CFLAGS) -c gt.cc
+
+enum.o : enum.cc cmatrix.o gnm.o gnmgame.o
+	$(CC) -D$(SYSNAME) $(CFLAGS) -c enum.cc
 
 clean :
 	@echo "Removing object files..."

@@ -38,6 +38,10 @@ class nfgame : public gnmgame {
     payoffs[findIndex(player, s)]= value;
   }
 
+  inline int getBlockSize(int player) {
+    return blockSize[player];
+  }
+
   double getMixedPayoff(int player, cvector &s);
   void payoffMatrix(cmatrix &dest, cvector &s, double fuzz);
 
