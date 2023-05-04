@@ -1,7 +1,6 @@
 #include "cmatrix.h"
-#include "enummix.h"
+#include "enummix2.h"
 #include "gnmgame.h"
-#include <vector>
 
 // Input: n - Number of action
 // Output: powerset - all supports sets

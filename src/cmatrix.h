@@ -270,10 +270,10 @@ public:
 	    x[i] = -x[i];
 	  }
 	}
+	double *x;
 
 private:
 	int m;
-	double *x;
 };
 
 inline double maxDouble(double f1, double f2) {
@@ -825,12 +825,12 @@ bool solve(cvector &b, cvector &dest);
 	inline int getn() const { return n; }
 
 	inline void compact() { }
+	double *x;
 
 private:
 	static double pythag(double a, double b);
 
 	int m,n,s;
-	double *x;
 };
 
 inline cmatrix operator+(const cmatrix &a, const cmatrix &b) {
