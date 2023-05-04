@@ -3,7 +3,9 @@
 #include "gnmgame.h"
 #include<vector>
 
-void getPowerset(int n, std::vector<std::vector<int> > &powerset) {
+// Input: n - Number of action
+// Output: powerset - all supports sets
+void getPowerSet(int n, std::vector<std::vector<int> > &powerset) {
     unsigned int setsize = pow(2, n);
     powerset.resize(setsize);
     for (int i = 0; i < setsize; ++i) {
@@ -13,6 +15,27 @@ void getPowerset(int n, std::vector<std::vector<int> > &powerset) {
             }
         }
     }
+}
+
+
+void kComb(int n, int k, int i, int x, std::vector<std::vector<int>> &output, std::vector<int> tmp) {
+    if (i == k) {
+        output.push_back(tmp);
+        return;
+    }
+    if (x >= n) {
+        return;
+    }
+    kComb(n, k, i, x + 1, output, tmp);
+    tmp[i] = x;
+    kComb(n, k, i + 1, x + 1, output, tmp);
+}
+
+// Input: n - Number of action, k - Support size
+// Output: ksupportset - suppport sets of size K
+void getKSupportSet(int n, int k, std::vector<std::vector<int>> &ksupportset) {
+    std::vector<int> tmp(k, 0);
+    kComb(n, k, 0, 0, ksupportset, tmp);
 }
 
 bool solveNE(cmatrix &A, cvector &Mx, cvector &My, cvector &y) {
@@ -88,9 +111,20 @@ int ENUMMIX(gnmgame &G, int* ans) {
 
     unsigned int p1NumActions = G.getNumActions(0);
     unsigned int p2NumActions = G.getNumActions(1);
-    std::vector<std::vector<int> > M, N;
-    getPowerset(p1NumActions, M);
-    getPowerset(p2NumActions, N);
+    unsigned int k = min(p1NumActions, p2NumActions);
+
+    for (int i = 1; i <= k; ++i) {
+        std::vector<std::vector<int>> p1KsupportSet, p2KsupportSet;
+        getKSupportSet(p1NumActions, i, p1KsupportSet);
+        getKSupportSet(p2NumActions, i, p2KsupportSet);
+        for (std::vector<int> Mx : p1KsupportSet) {
+            for (std::vector<int> My : p2KsupportSet) {
+                bool s1 = solveNE
+                bool s2 = solveNE
+            }
+        }
+    }
+
 
     for (std::vector<int> Mx : M)
         for (std::vector<int> Ny : N) {
