@@ -34,6 +34,11 @@ class nfgame : public gnmgame {
     return payoffs[findIndex(player, s)];
   }
 
+  // For 2-player special cases: the payoff is a 2-dim matrix
+  inline cmatrix getPurePayoffMatrix(int player) {
+    return cmatrix(payoffs.values() + player * blockSize[2], actions[0], actions[1]);
+  }
+
   inline void setPurePayoff(int player, int *s, double value) {
     payoffs[findIndex(player, s)]= value;
   }
