@@ -89,6 +89,7 @@ int ENUMMIX(gnmgame &G, int* ans) {
     unsigned int p1NumActions = G.getNumActions(0);
     unsigned int p2NumActions = G.getNumActions(1);
     std::vector<std::vector<int> > M, N;
+    cvector ans
     getPowerset(p1NumActions, M);
     getPowerset(p2NumActions, N);
 

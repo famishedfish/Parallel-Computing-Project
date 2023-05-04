@@ -1,15 +1,20 @@
 CC = g++
+NVCC = nvcc
 
 SYSNAME = LINUX
 DFLAG =
 CFLAGS = $(DFLAG) -O2 -fopenmp
-LDFLAGS =
+LDFLAGS=-L/usr/local/cuda-11.7/lib64/ -lcudart
+
+NVCCFLAGS=-O3 -m64 --gpu-architecture compute_61 -ccbin /usr/bin/gcc
 
 TARGET = gt
 
+OBJDIR=objs
+
 HDRS =  cmatrix.h gnmgame.h nfgame.h ipa.h gnm.h enum.h
 SRCS =  cmatrix.cc gnmgame.cc nfgame.cc makegame.cc ipa.cc gnm.cc gt.cc enum.cc
-OBJS = $(SRCS:.cc=.o)
+OBJS = $(SRCS:.cc=.o) enummix.o
 PROGS = gt
 
 default : $(TARGET) 
@@ -40,6 +45,9 @@ gt.o : gt.cc gnm.o ipa.o makegame.o
 
 enum.o : enum.cc cmatrix.o gnm.o gnmgame.o
 	$(CC) -D$(SYSNAME) $(CFLAGS) -c enum.cc
+
+%.o: %.cu
+		$(NVCC) $< $(NVCCFLAGS) -c -o $@
 
 clean :
 	@echo "Removing object files..."

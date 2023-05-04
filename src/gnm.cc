@@ -328,7 +328,7 @@ int GNM(gnmgame &A, cvector &g, cvector **&Eq, int steps, double fuzz, int LNMFr
       err += sigma;
       err -= z;
       err.negate();
-      ee = max(err.max(),-err.min());
+      ee = maxDouble(err.max(),-err.min());
       if(ee < fuzz && stepsLeft > 2) { // path is probably near-linear;
        	stepsLeft = 2;                 // step all the way to boundary
 	k = LNMFreq - 1;               // then run LNM

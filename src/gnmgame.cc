@@ -115,7 +115,7 @@ double gnmgame::LNM(cvector &z, const cvector &g, double det, cmatrix &J, cmatri
       del += s;
       del -= z;
       del.negate();
-      ee = max(del.max(),-del.min());
+      ee = maxDouble(del.max(),-del.min());
 
       if(ee < fuzz) {
 	e = ee;

@@ -276,7 +276,7 @@ private:
 	double *x;
 };
 
-inline double max(double f1, double f2) {
+inline double maxDouble(double f1, double f2) {
         return ((f1 > f2) ? f1 : f2);
 }
 inline cvector operator+(const cvector &a, const cvector &b) {
@@ -426,6 +426,12 @@ public:
 		int i,j,c=0;
 		for(i=0;i<m;i++) for(j=0;j<n;j++,c++)
 			x[c] = v1.x[i]*v2.x[j];
+	}
+	inline int getSize() {
+		return s;
+	}
+	inline void setx(double* x) {
+		this->x = x;
 	}
 
 	inline cmatrix operator-() const {
