@@ -42,9 +42,13 @@
 
 void usage(char *name) { 
   cout << "GameTracer 0.2\n\
-  usage: " << name << " [-i] [file|-r players actions gameseed] rayseed\n\
+  usage: " << name << " [-i|-e] [-t] [-s size of nodes to degenerate to serial] [file|-r players actions gameseed] rayseed\n\
   \n\
   -i:      use IPA (iterative polymatrix approximation)\n\
+  -e:      use enumerate (pure strategy)\n\
+  -t:      use task to parallel\n\
+  -s:      the size threshold  to degenrate from parallel to serial\n\
+  -d:      set when use enumerate\n\
   file:    read game in from file\n\
   -r:      generate a game with the specified number of players and\n\
           actions per player, with payoffs chosen randomly from [0,1]\n\
@@ -53,8 +57,9 @@ void usage(char *name) {
 
 int main(int argc, char **argv) {
   auto start_time = std::chrono::high_resolution_clock::now();
-  int i, seed, doipa = 0, doenum = 0, argbase = 0;
-  gnmgame *A;
+  int i, seed, doipa = 0, doenum = 0, usetask = 0, argbase = 0, thresholdsize = 0;
+  nfgame *A;
+  // gnmgame *A;
 
   if(argc < 2) {
     usage(argv[0]);
@@ -77,6 +82,19 @@ int main(int argc, char **argv) {
       usage(argv[0]);
       return -1;
     }
+  }
+  if(strcmp(argv[1+argbase],"-t") == 0) {
+    usetask = 1;
+    argbase++;
+    argc--;
+    if(argc < 1) {
+      usage(argv[0]);
+      return -1;
+    }
+  }
+  if(strcmp(argv[1+argbase],"-s") == 0) {
+    thresholdsize = atoi(argv[2+argbase]);
+    argbase += 2;
   }
   if(strcmp(argv[1+argbase],"-r") == 0) {
     if(argc < 6) {
@@ -120,13 +138,13 @@ int main(int argc, char **argv) {
     // Find one NE
     start_time = std::chrono::high_resolution_clock::now();
     int ans[A->getNumPlayers()];
-    if (ENUM(*A, ans)) {
+    if (ENUM(*A, ans, usetask, thresholdsize)) {
       for (int i = 0; i < A->getNumPlayers(); i++)
         cout << int(ans[i]) << " ";
       cout << "\n";
     }
     else
-      cout << "No pure" << endl;
+      cout << "No pure NE." << endl;
   } else {
     cout << "GNM\n";
     cvector **answers;

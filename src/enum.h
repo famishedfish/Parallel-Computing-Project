@@ -2,8 +2,9 @@
 #define __ENUM_H
 
 #include "cmatrix.h"
-#include "gnmgame.h"
+#include "nfgame.h"
+// #include "gnmgame.h"
 
-int ENUM(gnmgame &A, int* ans); 
+int ENUM(nfgame &A, int* ans, bool taskFlag, int threshold); 
 
 #endif
