@@ -5,7 +5,6 @@
 #include "cmatrix.h"
 #include "gnmgame.h"
 
-int ENUMMIX2(gnmgame &A, std::vector<std::vector<cvector> > &ans); 
-void getKSupportSet(int n, int k, std::vector<std::vector<int>> &ksupportset);
+int ENUMMIX2(gnmgame &G, std::vector<std::vector<cvector> > &ans);
 
 #endif

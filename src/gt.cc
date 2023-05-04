@@ -157,6 +157,17 @@ int main(int argc, char **argv) {
     }
     else
       cout << "No pure NE." << endl;
+  } else if (doenummix2) {
+    cout << "ENUMMIX2\n";
+    start_time = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<cvector> > ans;
+    if (ENUMMIX2(*A, ans)) {
+      for (auto eq : ans) {
+        cout << "p1: (" << eq[0] << ") p2: (" << eq[1]<<")"<<endl;
+      }
+    }
+    else
+      cout << "No mixed NE." << endl;
   } else {
     cout << "GNM\n";
     start_time = std::chrono::high_resolution_clock::now();
