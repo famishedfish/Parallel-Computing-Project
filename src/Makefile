@@ -13,8 +13,8 @@ TARGET = gt
 OBJDIR=objs
 
 HDRS =  cmatrix.h gnmgame.h nfgame.h ipa.h gnm.h enum.h
-SRCS =  cmatrix.cc gnmgame.cc nfgame.cc makegame.cc ipa.cc gnm.cc gt.cc enum.cc
-OBJS = $(SRCS:.cc=.o) enummix2.o
+SRCS =  cmatrix.cc gnmgame.cc nfgame.cc makegame.cc ipa.cc gnm.cc gt.cc enum.cc enummix2.cc
+OBJS = $(SRCS:.cc=.o)
 PROGS = gt
 
 default : $(TARGET) 
@@ -46,8 +46,11 @@ gt.o : gt.cc gnm.o ipa.o makegame.o
 enum.o : enum.cc cmatrix.o gnm.o gnmgame.o
 	$(CC) -D$(SYSNAME) $(CFLAGS) -c enum.cc
 
-%.o: %.cu
-		$(NVCC) $< $(NVCCFLAGS) -c -o $@
+enummix2.o : enummix2.cc cmatrix.o gnm.o gnmgame.o
+	$(CC) -D$(SYSNAME) $(CFLAGS) -c enummix2.cc
+
+# %.o: %.cu
+# 		$(NVCC) $< $(NVCCFLAGS) -c -o $@
 
 clean :
 	@echo "Removing object files..."
