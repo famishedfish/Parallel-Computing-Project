@@ -6,7 +6,7 @@
 
 int NENum = 0;
 bool useTask = false;
-int sizeThred = 100000000;
+int sizeThred = 1000;
 
 // Returns true if a given strategy profile is a Nash equilibrium
 bool isNE(nfgame &A, int* profile) {
@@ -43,14 +43,15 @@ void setProfileRecursiveDegenerate(nfgame &A, int* profile, int player, int* ans
             NENum++;
         }
     } else {
-        // Loop over all possible strategies for the current player
         int nodeSize = A.getBlockSize(player);
+        #pragma omp parallel for
         for (int i = 0; i < A.getNumActions(player); i++) {
             profile[player] = i;
-            #pragma omp parallel
-            #pragma omp task shared(A) if (useTask && nodeSize < sizeThred)
-            {
-            setProfileRecursiveDegenerate(A, profile, player+1, ans);
+            if (nodeSize < sizeThred) {
+                #pragma omp task
+                setProfileRecursiveDegenerate(A, profile, player+1, ans);
+            } else {
+                setProfileRecursiveDegenerate(A, profile, player+1, ans);
             }
         }
     }
@@ -86,12 +87,12 @@ int ENUM(nfgame &A, int* ans, bool taskFlag, int threshold) {
     #else
     cout << "Openmp not available." << endl;
     #endif
+    // #pragma omp parallel
+    // #pragma omp single
+    // setProfileRecursiveDegenerate(A, profile, 0, ans);
+    // return 0;
     int method = 3;
     switch (method) {
-    case 0:
-        // ---------- 0. pure serial --------------------------
-
-        break;
     case 1:
         // ---------- 1. pure parallel ------------------------
         setProfileRecursiveForParallel(A, profile, 0, ans);
@@ -105,7 +106,7 @@ int ENUM(nfgame &A, int* ans, bool taskFlag, int threshold) {
     case 3:
         // ---------- 3. task * 1 + parallel ------------------
         #pragma omp parallel
-        #pragma omp paralle task
+        #pragma omp task
         for (int i = 0; i < A.getNumActions(0); i++) {
             profile[0] = i;
             setProfileRecursiveForParallel(A, profile, 1, ans);

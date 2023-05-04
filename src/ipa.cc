@@ -66,6 +66,7 @@ int IPA(gnmgame &A, cvector &g, cvector &zh, double alpha, double fuzz, cvector 
     ymn2(M+N);
 
   // Find the best action for each player when the game is highly perturbed
+  #pragma omp parallel for
   for(n = 0; n < N; n++) {
     bestPayoff = g[A.firstAction(n)];
     bestAction = A.firstAction(n);
@@ -89,12 +90,12 @@ int IPA(gnmgame &A, cvector &g, cvector &zh, double alpha, double fuzz, cvector 
     // Initialize the Lemke-Howson tableau
     for(n = 0; n < N; n++) {
       for(i = 0; i < M+N; i++) {
-	if(i >= A.firstAction(n) && i < A.lastAction(n)) {
-	  T[M+n][i] = 1;
-	  T[i][M+n] = -1;
-	} else {
-	  T[M+n][i] = T[i][M+n] = 0;
-	}
+        if(i >= A.firstAction(n) && i < A.lastAction(n)) {
+          T[M+n][i] = 1;
+          T[i][M+n] = -1;
+        } else {
+          T[M+n][i] = T[i][M+n] = 0;
+        }
       }
     }
     for(n = 0; n < M; n++) {
@@ -107,12 +108,12 @@ int IPA(gnmgame &A, cvector &g, cvector &zh, double alpha, double fuzz, cvector 
     }
     for(i = 0; i < M; i++)
       for(j = 0; j < M; j++)
-	T[i][j] = DG[i][j];
+	      T[i][j] = DG[i][j];
 
     // copy the tableau to T2
     for(i = 0; i < M+N; i++)
       for(j = 0; j < M+N; j++)
-	T2[i][j] = T[i][j];
+	      T2[i][j] = T[i][j];
 
     // zero out columns not in the support
     for(i = 0; i < M; i++) {
