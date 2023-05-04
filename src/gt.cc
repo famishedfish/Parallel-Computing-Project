@@ -132,9 +132,11 @@ int main(int argc, char **argv) {
   int numEq;
   if(doipa) {
     cout << "IPA\n";
+    start_time = std::chrono::high_resolution_clock::now();
     cvector ans(A->getNumActions());
     cvector zh(A->getNumActions(),1.0);
     do {
+      #pragma omp for
       for(i = 0; i < A->getNumActions(); i++) {
         g[i] = drand48();
       }
@@ -157,6 +159,7 @@ int main(int argc, char **argv) {
       cout << "No pure NE." << endl;
   } else {
     cout << "GNM\n";
+    start_time = std::chrono::high_resolution_clock::now();
     cvector **answers;
     do {
       for(i = 0; i < A->getNumActions(); i++) {
