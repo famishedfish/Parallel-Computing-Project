@@ -14,7 +14,7 @@ OBJDIR=objs
 
 HDRS =  cmatrix.h gnmgame.h nfgame.h ipa.h gnm.h enum.h
 SRCS =  cmatrix.cc gnmgame.cc nfgame.cc makegame.cc ipa.cc gnm.cc gt.cc enum.cc
-OBJS = $(SRCS:.cc=.o) enummix.o
+OBJS = $(SRCS:.cc=.o) enummix2.o
 PROGS = gt
 
 default : $(TARGET) 

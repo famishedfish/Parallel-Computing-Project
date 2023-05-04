@@ -19,6 +19,7 @@
 
 #include "ipa.h"
 #include "enum.h"
+#include "enummix2.h"
 #include "gnm.h"
 #include "nfgame.h"
 #include "makegame.h"
@@ -57,7 +58,7 @@ void usage(char *name) {
 
 int main(int argc, char **argv) {
   auto start_time = std::chrono::high_resolution_clock::now();
-  int i, seed, doipa = 0, doenum = 0, usetask = 0, argbase = 0, thresholdsize = 0;
+  int i, seed, doipa = 0, doenum = 0, doenummix2 = 0, usetask = 0, argbase = 0, thresholdsize = 0;
   nfgame *A;
   // gnmgame *A;
 
@@ -76,6 +77,15 @@ int main(int argc, char **argv) {
   }
   if(strcmp(argv[1],"-e") == 0) {
     doenum = 1;
+    argbase++;
+    argc--;
+    if(argc < 2) {
+      usage(argv[0]);
+      return -1;
+    }
+  }
+  if(strcmp(argv[1],"-emix2") == 0) {
+    doenummix2 = 1;
     argbase++;
     argc--;
     if(argc < 2) {
