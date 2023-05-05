@@ -40,36 +40,37 @@ void getKSupportSet(int n, int k, std::vector<std::vector<int>> &ksupportset) {
 
 
 // Compute NE by solving Mx = b
-bool solveNE(cmatrix &A, std::vector<int> &Mx, std::vector<int> &My, cvector &y) {
+bool solveNE(cmatrix &A, int *Mx, int *Ny, cvector &y, int k) {
     // M_(m,n) = 3 types of constriants: indifference, zero support, prob sum up to 1
-    int m = Mx.size() - 1 + A.getn() - My.size() + 1;
+    int m = k - 1 + A.getn() - k + 1;
     int n = A.getn();
     double *coef = new double[m * n]();
     // indifference constraints
     cvector v0(A[Mx[0]], n);
-    for (int i = 1; i < Mx.size(); ++i) {
+    for (int i = 1; i < k; ++i) {
         cvector vi(A[Mx[i]], n);
         cvector vdiff = v0 - vi;
         memcpy(coef + (i - 1) * n, vdiff.values(), n * sizeof(double));
     }
     // zero constraints
-    vector<int> zero(n, 1);
-    vector<double> zeroCoef(n, 0);
-    for (int i = 0; i < My.size(); ++i) {
-        zero[My[i]] = 0;
-    }
-    int ridx = Mx.size() - 1;
+    int *zero = new int[n];
+    for (int i = 0; i < n; ++i) zero[i] = 1; 
+    for (int i = 0; i < k; ++i) zero[Ny[i]] = 0;
+    double *zeroCoef = new double[n]();
+    for (int i = 0; i < n; ++i) zeroCoef[i] = 0.0;
+    int ridx = k - 1;
     for (int i = 0; i < n; ++i) {
         if (zero[i] == 1) {
             zeroCoef[i] = 1;
-            memcpy(coef + ridx * n, zeroCoef.data(), n * sizeof(double));
+            memcpy(coef + ridx * n, zeroCoef, n * sizeof(double));
             ridx++;
             zeroCoef[i] = 0;
         }
     }
     // sum(prob) == 1 constraint
-    vector<double> probCoef(n, 1);
-    memcpy(coef + (m - 1) * n, probCoef.data(), n * sizeof(double));
+    double *probCoef = new double[n];
+    for (int i = 0; i < n; ++i) probCoef[i] = 1.0;
+    memcpy(coef + (m - 1) * n, probCoef, n * sizeof(double));
 
     cmatrix M(coef, m, n);
 
@@ -79,10 +80,16 @@ bool solveNE(cmatrix &A, std::vector<int> &Mx, std::vector<int> &My, cvector &y)
     
     cvector b(res, m);
 
+    delete []coef;
+    delete []zero;
+    delete []zeroCoef;
+    delete []probCoef;
+    delete []res;
+
     // Solve the equations
     if (M.solve(b, y)) {
-        for (int t : My) {
-            if (y[t] <= 0) {
+        for (int i = 0; i < k; ++i) {
+            if (y[Ny[i]] <= 0) {
                 return false;
             }
         }
@@ -92,17 +99,19 @@ bool solveNE(cmatrix &A, std::vector<int> &Mx, std::vector<int> &My, cvector &y)
 }
 
 // Verify NE with threorem 1
-bool isNE(cvector &x, cvector &y, vector<int> Mx, vector<int> Ny, cmatrix A, cmatrix B) {
+bool isNE(cvector &x, cvector &y, int *Mx, int *Ny, cmatrix A, cmatrix B, int k) {
     cvector u = A * y;
     cvector v = cmatrix(B, true) * x;
     double umax = u.max();
-    for (int action : Mx) {
+    for (int i = 0; i < k; ++i) {
+        int action = Mx[i];
         if (u[action] != umax) {
             return false;
         }
     }
     double vmax = v.max();
-    for (int action : Ny) {
+    for (int i = 0; i < k; ++i) {
+        int action = Ny[i];
         if (v[action] != vmax) {
             return false;
         }
@@ -124,12 +133,12 @@ int ENUMMIX2(gnmgame &G, std::vector<std::vector<cvector> > &ans) {
         getKSupportSet(p2NumActions, i, p2KsupportSet);
 
         for (std::vector<int> Mx : p1KsupportSet) {
-            for (std::vector<int> My : p2KsupportSet) {
+            for (std::vector<int> Ny : p2KsupportSet) {
                 cvector x(p1NumActions), y(p2NumActions);
-                bool s1 = solveNE(A, Mx, My, y);
+                bool s1 = solveNE(A, Mx.data(), Ny.data(), y, i);
                 cmatrix BT = cmatrix(B, true);
-                bool s2 = solveNE(BT, My, Mx, x);
-                if (s1 && s2 && isNE(x, y, Mx, My, A, B)) {
+                bool s2 = solveNE(BT, Ny.data(), Mx.data(), x, i);
+                if (s1 && s2 && isNE(x, y, Mx.data(), Ny.data(), A, B, i)) {
                     ans.push_back({x, y});
                 }
             }
